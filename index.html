@@ -349,6 +349,7 @@
       .s-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.2rem; }
       .s-title,
       .r-title { font-weight: 600; }
+      .s-badge, .s-link { font-family: var(--font-sans); }
       .s-meta { font-size: 0.82rem; color: var(--fg-subtle); }
       .r-title { flex: 1; min-width: 0; color: var(--fg); text-decoration: none; }
       a.r-title:hover { color: var(--accent); }
@@ -1104,7 +1105,8 @@
           t.textContent = s.title || "";
           body.appendChild(t);
           var meta = [];
-          if (s.date) meta.push(s.date);
+          // A "date" key (even empty) reserves the slot; empty shows a placeholder.
+          if ("date" in s) meta.push("تاریخ برگزاری: " + (s.date || "به‌زودی"));
           if (s.speaker) meta.push(s.speaker);
           if (meta.length) {
             var m = document.createElement("span");
