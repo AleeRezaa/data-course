@@ -350,7 +350,26 @@
       .s-title,
       .r-title { font-weight: 600; }
       .s-badge, .s-link { font-family: var(--font-sans); }
-      .s-meta { font-size: 0.82rem; color: var(--fg-subtle); }
+      .s-body { gap: 0.45rem; }
+      .s-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem 1.1rem;
+        font-size: 0.84rem;
+        color: var(--fg-muted);
+      }
+      .s-meta-item { display: inline-flex; align-items: center; gap: 0.4rem; }
+      .s-meta-item svg { flex: none; color: var(--accent); }
+      .s-meta-item.pending { color: var(--fg-subtle); }
+      .s-meta-item.pending svg { color: var(--fg-subtle); }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
       .r-title { flex: 1; min-width: 0; color: var(--fg); text-decoration: none; }
       a.r-title:hover { color: var(--accent); }
       .s-link {
@@ -1104,16 +1123,34 @@
           t.className = "s-title";
           t.textContent = s.title || "";
           body.appendChild(t);
-          var meta = [];
-          // A "date" key (even empty) reserves the slot; empty shows a placeholder.
-          if ("date" in s) meta.push("تاریخ برگزاری: " + (s.date || "به‌زودی"));
-          if (s.speaker) meta.push(s.speaker);
-          if (meta.length) {
-            var m = document.createElement("span");
-            m.className = "s-meta";
-            m.textContent = meta.join(" · ");
-            body.appendChild(m);
+          var m = document.createElement("div");
+          m.className = "s-meta";
+          function metaItem(icon, label, text, pending) {
+            var it = document.createElement("span");
+            it.className = "s-meta-item" + (pending ? " pending" : "");
+            it.innerHTML =
+              '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+              icon + "</svg>";
+            var sr = document.createElement("span");
+            sr.className = "sr-only";
+            sr.textContent = label + ": ";
+            it.appendChild(sr);
+            it.appendChild(document.createTextNode(text));
+            m.appendChild(it);
           }
+          if (s.speaker) {
+            metaItem('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>', "مدرس", s.speaker);
+          }
+          // A "date" key (even empty) reserves the slot; empty shows a placeholder.
+          if ("date" in s) {
+            metaItem(
+              '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
+              "تاریخ برگزاری",
+              s.date || "تاریخ به‌زودی اعلام می‌شود",
+              !s.date
+            );
+          }
+          if (m.childNodes.length) body.appendChild(m);
           li.appendChild(body);
           if (s.link) {
             var a = document.createElement("a");
