@@ -358,6 +358,23 @@
         font-size: 0.84rem;
         color: var(--fg-muted);
       }
+      .s-more {
+        flex: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font: inherit;
+        font-size: 0.8rem;
+        color: var(--fg-muted);
+        background: transparent;
+        border: 1px solid var(--rule);
+        border-radius: 6px;
+        padding: 0.35rem 0.7rem;
+        cursor: pointer;
+        transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+      }
+      .s-more:hover { color: #fff; background: var(--accent); border-color: var(--accent); }
+      .modal-meta { margin-top: 0.25rem; }
       .s-meta-item { display: inline-flex; align-items: center; gap: 0.4rem; }
       .s-meta-item svg { flex: none; color: var(--accent); }
       .s-meta-item.pending { color: var(--fg-subtle); }
@@ -835,14 +852,7 @@
       <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="cv-name">
         <button type="button" class="modal-close" data-close aria-label="بستن">✕</button>
         <h3 id="cv-name"></h3>
-        <div class="modal-section" id="cv-edu-wrap">
-          <h4>سوابق تحصیلی</h4>
-          <ul id="cv-edu"></ul>
-        </div>
-        <div class="modal-section" id="cv-exp-wrap">
-          <h4>سوابق کاری</h4>
-          <ul id="cv-exp"></ul>
-        </div>
+        <div id="cv-body"></div>
       </div>
     </div>
 
@@ -1066,24 +1076,38 @@
           }
           list.forEach(function (p) { el.appendChild(card(p)); });
         }
-        // Résumé modal — education + work history, opened from a person card.
+        // Shared modal: a title, an optional lead node, then titled bullet
+        // lists. Used for résumés (person cards) and session details.
         var modal = document.getElementById("cv-modal");
-        function fillCv(ul, wrap, items) {
-          ul.innerHTML = "";
-          if (!items || !items.length) { wrap.hidden = true; return; }
-          wrap.hidden = false;
-          items.forEach(function (t) {
-            var li = document.createElement("li");
-            li.textContent = t;
-            ul.appendChild(li);
+        function openModal(title, sections, lead) {
+          document.getElementById("cv-name").textContent = title || "";
+          var body = document.getElementById("cv-body");
+          body.innerHTML = "";
+          if (lead) body.appendChild(lead);
+          sections.forEach(function (s) {
+            if (!s.items || !s.items.length) return;
+            var wrap = document.createElement("div");
+            wrap.className = "modal-section";
+            var h = document.createElement("h4");
+            h.textContent = s.heading;
+            var ul = document.createElement("ul");
+            s.items.forEach(function (t) {
+              var li = document.createElement("li");
+              li.textContent = t;
+              ul.appendChild(li);
+            });
+            wrap.appendChild(h);
+            wrap.appendChild(ul);
+            body.appendChild(wrap);
           });
-        }
-        function openCv(p) {
-          document.getElementById("cv-name").textContent = p.name || "";
-          fillCv(document.getElementById("cv-edu"), document.getElementById("cv-edu-wrap"), p.education);
-          fillCv(document.getElementById("cv-exp"), document.getElementById("cv-exp-wrap"), p.experience);
           modal.hidden = false;
           document.body.style.overflow = "hidden";
+        }
+        function openCv(p) {
+          openModal(p.name, [
+            { heading: "سوابق تحصیلی", items: p.education },
+            { heading: "سوابق کاری", items: p.experience },
+          ]);
         }
         function closeCv() {
           modal.hidden = true;
@@ -1152,6 +1176,21 @@
           }
           if (m.childNodes.length) body.appendChild(m);
           li.appendChild(body);
+          if (s.details && s.details.length) {
+            var d = document.createElement("button");
+            d.type = "button";
+            d.className = "s-more";
+            d.innerHTML =
+              '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+              '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/>' +
+              "</svg>جزئیات";
+            d.addEventListener("click", function () {
+              var lead = m.cloneNode(true);
+              lead.classList.add("modal-meta");
+              openModal(s.title, [{ heading: "توضیحات تکمیلی", items: s.details }], lead);
+            });
+            li.appendChild(d);
+          }
           if (s.link) {
             var a = document.createElement("a");
             a.className = "s-link";
