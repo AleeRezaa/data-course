@@ -398,6 +398,96 @@
       }
       .s-link:hover { color: var(--accent); }
 
+      /* Sponsors */
+      #sponsors { padding-bottom: 5rem; }
+      .sponsors-note { margin: -0.4rem 0 1.5rem; font-size: 0.92rem; color: var(--fg-muted); }
+      .sponsors {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
+        gap: 1rem;
+        max-width: 48rem;
+      }
+      .sponsors .soon-box { grid-column: 1 / -1; }
+      .sponsor {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 1.1rem;
+        padding: 1.15rem 1.25rem;
+        background:
+          radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--accent) 7%, transparent), transparent 60%),
+          var(--bg-elevated);
+        border: 1px solid var(--rule);
+        border-radius: 14px;
+        color: var(--fg);
+        text-decoration: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+      /* Orange corner ticks, echoing the site's .frame panels. */
+      .sponsor::before,
+      .sponsor::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border: 0 solid var(--accent);
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+      .sponsor::before { top: -1px; right: -1px; border-top-width: 2px; border-right-width: 2px; border-top-right-radius: 14px; }
+      .sponsor::after { bottom: -1px; left: -1px; border-bottom-width: 2px; border-left-width: 2px; border-bottom-left-radius: 14px; }
+      .sponsor:hover {
+        transform: translateY(-3px);
+        border-color: color-mix(in srgb, var(--accent) 40%, var(--rule));
+        box-shadow: 0 18px 36px -22px color-mix(in srgb, var(--accent) 60%, transparent);
+      }
+      .sponsor:hover::before,
+      .sponsor:hover::after { opacity: 1; }
+      .sponsor-logo {
+        flex: none;
+        width: 4.75rem;
+        height: 4.75rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow:
+          0 0 0 1px var(--rule),
+          0 6px 16px -10px rgba(0, 0, 0, 0.35);
+        color: var(--accent-ink);
+        font-family: var(--font-mono);
+        font-weight: 600;
+        transition: transform 0.2s ease;
+      }
+      .sponsor:hover .sponsor-logo { transform: scale(1.04); }
+      .sponsor-logo img { width: 100%; height: 100%; object-fit: contain; padding: 0.55rem; }
+      .sponsor-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.25rem; }
+      .sponsor-name { font-weight: 700; font-size: 1.1rem; line-height: 1.3; }
+      .sponsor-tagline { font-size: 0.85rem; color: var(--fg-muted); line-height: 1.6; }
+      .sponsor-host {
+        align-self: flex-start;
+        margin-top: 0.35rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-family: var(--font-mono);
+        font-size: 0.74rem;
+        color: var(--accent-ink);
+        background: var(--accent-soft);
+        border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+        border-radius: 999px;
+        padding: 0.15rem 0.6rem;
+        transition: background 0.2s ease, color 0.2s ease;
+      }
+      .sponsor-host .arrow { display: inline-block; transition: transform 0.2s ease; }
+      .sponsor:hover .sponsor-host { color: #fff; background: var(--accent); border-color: var(--accent); }
+      .sponsor:hover .sponsor-host .arrow { transform: translate(2px, -2px); }
+
       /* Participants & mentors */
       .soon { padding: 0 0 6rem; }
       .roster {
@@ -704,6 +794,7 @@
           <a href="#projects">پروژه‌ها</a>
           <a href="#resources">منابع</a>
           <a href="#team">منتورها</a>
+          <a href="#sponsors">حامیان</a>
           <a class="nav-tg" href="https://t.me/data_ai_engineering" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
               <path d="M21.94 4.6 18.9 19.2c-.23 1.02-.84 1.27-1.7.79l-4.7-3.47-2.27 2.18c-.25.25-.46.46-.94.46l.33-4.77 8.67-7.84c.38-.34-.08-.53-.59-.19L6.98 13.2l-4.62-1.45c-1-.31-1.02-1 .21-1.48L20.63 3.3c.84-.31 1.57.19 1.31 1.3z" />
@@ -819,6 +910,19 @@
             <ul class="people" id="participants"><li class="people-loading">در حال بارگذاری…</li></ul>
           </div>
         </div>
+      </section>
+
+      <section class="course" id="sponsors">
+        <div class="enroll-head">
+          <span class="log-line" dir="ltr">
+            <span class="stage">[SPONSORS]</span>
+            <span class="prompt">$</span>
+            <span class="cmd">./sponsors</span>
+          </span>
+        </div>
+        <h2>حامیان</h2>
+        <p class="sponsors-note">از مجموعه‌هایی که در برگزاری این دوره همراه ما هستن، صمیمانه سپاسگزاریم.</p>
+        <ul class="sponsors" id="sponsors-list"><li class="people-loading">در حال بارگذاری…</li></ul>
       </section>
 
       <footer class="site-foot">
@@ -1130,7 +1234,7 @@
             .catch(function () { fill(el, []); });
         });
 
-        // Sessions, projects & resources are rendered from data/course.json.
+        // Sessions, projects, resources & sponsors are rendered from data/course.json.
         // Projects reuse the session card: type badge, title, date (deadline), link.
         function sessionCard(s) {
           var li = document.createElement("li");
@@ -1223,6 +1327,49 @@
           li.appendChild(t);
           return li;
         }
+        function sponsorCard(sp) {
+          var li = document.createElement("li");
+          var a = document.createElement("a");
+          a.className = "sponsor";
+          a.href = sp.link;
+          a.target = "_blank";
+          a.rel = "noopener";
+          a.setAttribute("aria-label", (sp.name || "") + " (در تب جدید باز می‌شود)");
+          var box = document.createElement("span");
+          box.className = "sponsor-logo";
+          var img = document.createElement("img");
+          img.src = sp.logo;
+          img.alt = "";
+          img.loading = "lazy";
+          img.onerror = function () { img.remove(); box.textContent = initials(sp.name); };
+          box.appendChild(img);
+          a.appendChild(box);
+
+          var info = document.createElement("span");
+          info.className = "sponsor-info";
+          var name = document.createElement("span");
+          name.className = "sponsor-name";
+          name.textContent = sp.name || "";
+          info.appendChild(name);
+          if (sp.tagline) {
+            var tl = document.createElement("span");
+            tl.className = "sponsor-tagline";
+            tl.textContent = sp.tagline;
+            info.appendChild(tl);
+          }
+          var host = document.createElement("span");
+          host.className = "sponsor-host";
+          host.dir = "ltr";
+          host.textContent = sp.link.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "") + " ";
+          var arrow = document.createElement("span");
+          arrow.className = "arrow";
+          arrow.textContent = "↗";
+          host.appendChild(arrow);
+          info.appendChild(host);
+          a.appendChild(info);
+          li.appendChild(a);
+          return li;
+        }
         function fillTrack(el, items, make) {
           if (!el) return;
           if (!items || !items.length) { fill(el, []); return; }
@@ -1235,11 +1382,13 @@
             fillTrack(document.getElementById("sessions-list"), d.sessions, sessionCard);
             fillTrack(document.getElementById("projects-list"), d.projects, sessionCard);
             fillTrack(document.getElementById("resources-list"), d.resources, resourceCard);
+            fillTrack(document.getElementById("sponsors-list"), d.sponsors, sponsorCard);
           })
           .catch(function () {
             fill(document.getElementById("sessions-list"), []);
             fill(document.getElementById("projects-list"), []);
             fill(document.getElementById("resources-list"), []);
+            fill(document.getElementById("sponsors-list"), []);
           });
       })();
 

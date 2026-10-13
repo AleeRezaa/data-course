@@ -13,5 +13,9 @@
     { "type": "جلسه ۱۱", "title": "لیک‌هاوس", "speaker": "مجتبی بنائی", "date": "" }
   ],
   "projects": [],
-  "resources": []
+  "resources": [],
+  "sponsors": [
+    { "name": "DataBurst", "tagline": "توانمندسازی آینده‌ی مهندسی داده", "link": "https://databurst.tech", "logo": "https://raw.githubusercontent.com/data-burst/databurst-public-assets/refs/heads/main/databurst/logo.jpg" },
+    { "name": "جویار", "tagline": "ایجنتی که به‌جای تو جست‌وجو می‌کنه", "link": "https://jouyaar.ir", "logo": "https://jouyaar.ir/logo/brand_color.svg" }
+  ]
 }
