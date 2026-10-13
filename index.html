@@ -1234,7 +1234,8 @@
             .catch(function () { fill(el, []); });
         });
 
-        // Sessions, projects, resources & sponsors are rendered from data/course.json.
+        // Sessions, projects, resources & sponsors are rendered from
+        // data/sessions.json, projects.json, resources.json and sponsors.json.
         // Projects reuse the session card: type badge, title, date (deadline), link.
         function sessionCard(s) {
           var li = document.createElement("li");
@@ -1376,20 +1377,20 @@
           el.innerHTML = "";
           items.forEach(function (x) { el.appendChild(make(x)); });
         }
-        fetch("data/course.json", { cache: "no-cache" })
-          .then(function (r) { return r.json(); })
-          .then(function (d) {
-            fillTrack(document.getElementById("sessions-list"), d.sessions, sessionCard);
-            fillTrack(document.getElementById("projects-list"), d.projects, sessionCard);
-            fillTrack(document.getElementById("resources-list"), d.resources, resourceCard);
-            fillTrack(document.getElementById("sponsors-list"), d.sponsors, sponsorCard);
-          })
-          .catch(function () {
-            fill(document.getElementById("sessions-list"), []);
-            fill(document.getElementById("projects-list"), []);
-            fill(document.getElementById("resources-list"), []);
-            fill(document.getElementById("sponsors-list"), []);
-          });
+        // Each list lives in its own data/<name>.json and loads independently,
+        // so one broken file doesn't blank the other sections.
+        [
+          ["sessions", sessionCard],
+          ["projects", sessionCard],
+          ["resources", resourceCard],
+          ["sponsors", sponsorCard],
+        ].forEach(function (x) {
+          var el = document.getElementById(x[0] + "-list");
+          fetch("data/" + x[0] + ".json", { cache: "no-cache" })
+            .then(function (r) { return r.json(); })
+            .then(function (list) { fillTrack(el, list, x[1]); })
+            .catch(function () { fill(el, []); });
+        });
       })();
 
       // Ambient event-stream background: slow drifting dots. ~0 CPU, respects
