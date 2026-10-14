@@ -1,11 +1,11 @@
-name: Validate people data
+name: Validate JSON
 
 on:
   pull_request:
-    paths: [data/mentors.json, data/participants.json, data/people.json]
+    paths: ["**.json"]
   push:
     branches: [main]
-    paths: [data/mentors.json, data/participants.json, data/people.json]
+    paths: ["**.json"]
   workflow_dispatch:
 
 jobs:
@@ -13,52 +13,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate data/mentors.json and data/participants.json
+      - name: Validate every JSON file
         run: |
           python3 - <<'PY'
-          import json, os, sys
+          import json, sys, glob
 
-          failed = False
-          if os.path.exists("data/people.json"):
-              print("::error file=data/people.json::people.json was split. Move your entry to "
-                    "data/participants.json (or data/mentors.json) and delete data/people.json. See CONTRIBUTING.md.")
-              failed = True
-          for group in ("mentors", "participants"):
-              path = f"data/{group}.json"
+          files = [f for f in sorted(glob.glob("**/*.json", recursive=True)) if "node_modules/" not in f]
+          errors = []
+          for path in files:
               try:
-                  with open(path, encoding="utf-8") as f:
-                      data = json.load(f)
+                  with open(path, encoding="utf-8") as fh:
+                      json.load(fh)
               except Exception as e:
+                  errors.append((path, str(e)))
                   print(f"::error file={path}::Invalid JSON: {e}")
-                  failed = True
-                  continue
 
-              errors = []
-              if not isinstance(data, list):
-                  errors.append("top level must be a list")
-                  data = []
-              for i, person in enumerate(data):
-                  where = f"[{i}]"
-                  if not isinstance(person, dict):
-                      errors.append(f"{where} must be an object")
-                      continue
-                  name = person.get("name")
-                  if not isinstance(name, str) or not name.strip():
-                      errors.append(f"{where}.name is required and must be a non-empty string")
-                  for key in ("linkedin", "avatar", "tag"):
-                      if key in person and not isinstance(person[key], str):
-                          errors.append(f"{where}.{key} must be a string")
-                  for key in ("education", "experience"):
-                      if key in person:
-                          v = person[key]
-                          if not isinstance(v, list) or not all(isinstance(x, str) for x in v):
-                              errors.append(f"{where}.{key} must be a list of strings")
-
-              for e in errors:
-                  print(f"::error file={path}::{e}")
-              failed = failed or bool(errors)
-
-          if failed:
-              sys.exit(1)
-          print("mentors.json and participants.json are valid")
+          print(f"checked {len(files)} JSON file(s); {len(errors)} invalid")
+          sys.exit(1 if errors else 0)
           PY
