@@ -147,5 +147,16 @@
       "DevOps eng at Fan Agin",
       "DevOps eng at Mazinoor Company"
     ]
+  },
+  {
+    "name": "Sepehr Tabeian",
+    "linkedin": "https://www.linkedin.com/in/sepehr-tabeian-554b601a8/",
+    "avatar": "https://avatars.githubusercontent.com/u/47686762?v=4",
+    "education": [
+      "Bachelor’s Degree in Polymer Engineering"
+    ],
+    "experience": [
+      "Mobile Developer(Flutter and Native)"
+    ]
   }
 ]
